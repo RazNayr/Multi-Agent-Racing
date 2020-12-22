@@ -28,8 +28,11 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        LookAtTarget();
-        MoveToTarget();
+        if(objectToFollow != null)
+        {
+            LookAtTarget();
+            MoveToTarget();
+        }
     }
 
 }

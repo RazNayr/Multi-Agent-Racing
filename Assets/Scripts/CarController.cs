@@ -20,22 +20,58 @@ public class CarController : MonoBehaviour
     public float maxSteerAngle = 30;
     public float speed = 50;
 
-    private float horizontalInput;
-    private float verticalInput;
-    private float steerAngle;
+    float horizontalInput;
+    float verticalInput;
+    float steerAngle;
+
+    bool startedRace = false;
+    int currentLap = 0;
+    float laptime = 0f;
+    bool toppledOver = false;
+    bool hitBorder = false;
+
+    LapManager lapManager;
 
     private void Start()
     {
+        lapManager = GameObject.Find("Lap Manager").GetComponent<LapManager>();
         Rigidbody carRigidbody = GetComponent<Rigidbody>();
         carRigidbody.velocity = new Vector3(0, 0, -30);
     }
 
+    private void Update()
+    {
+        if (!toppledOver && !hitBorder)
+        {
+            UpdateLapTime();
+            CheckIfToppledOver();
+        }
+    }
+
+    private void UpdateLapTime()
+    {
+        if (startedRace)
+            laptime += Time.deltaTime;
+    }
+
+    private void CheckIfToppledOver()
+    {
+        if(Vector3.Angle(transform.up, Vector3.up) > 75)
+        {
+            toppledOver = true;
+        }
+    }
+
     private void FixedUpdate()
     {
-        GetInput();
-        Steer();
-        Accelerate();
-        UpdateWheelPoses();
+        if(!toppledOver && !hitBorder)
+        {
+            GetInput();
+            Steer();
+            Accelerate();
+            UpdateWheelPoses();
+        }
+        
     }
 
     public void GetInput()
@@ -75,5 +111,35 @@ public class CarController : MonoBehaviour
         wheelTransform.position = newWheelPosition;
         wheelTransform.rotation = newWheelRotation;
 
+    }
+
+    private void OnTriggerEnter(Collider trigger)
+    {
+        if(trigger.gameObject.tag == "StartingLine")
+        {
+            if (!startedRace)
+            {
+                startedRace = true;
+            }
+            else
+            {
+                currentLap++;
+                lapManager.UpdateCarLapTimes(gameObject.name, laptime);
+                laptime = 0;
+                
+                if (currentLap == lapManager.numberOfLaps)
+                    Destroy(this.gameObject);
+            }
+            
+        }
+
+    }
+
+    private void OnCollisionEnter(Collision collider)
+    {
+        if (collider.gameObject.tag == "Border")
+        {
+            hitBorder = true;
+        }
     }
 }
