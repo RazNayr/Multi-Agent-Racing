@@ -4,5 +4,6 @@ Vision-based approaches have dominated the scene of Reinforcement Learning (RL) 
 > Please refer to the project report for further information
 
 ### Video Demo
-Link:https://youtu.be/MEz6-LGSXNk
+Link: https://youtu.be/MEz6-LGSXNk
+
 [![Watch the video](https://img.youtube.com/vi/MEz6-LGSXNk/maxresdefault.jpg)](https://youtu.be/MEz6-LGSXNk)
